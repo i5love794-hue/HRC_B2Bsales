@@ -17,9 +17,12 @@ CSV_FILENAME = "법인계정리스트_2605 - 법인계정_소유권이전&멤버
 CSV_PATH = os.path.join(DATA_DIR, CSV_FILENAME)
 
 
-def load_data() -> pd.DataFrame:
+def load_data(file_obj=None) -> pd.DataFrame:
     """CSV 파일을 로드하고 기본 전처리를 수행합니다."""
-    df = pd.read_csv(CSV_PATH, encoding="utf-8", dtype=str)
+    if file_obj is not None:
+        df = pd.read_csv(file_obj, encoding="utf-8", dtype=str)
+    else:
+        df = pd.read_csv(CSV_PATH, encoding="utf-8", dtype=str)
 
     # 컬럼명 앞뒤 공백 제거 및 줄바꿈 제거
     df.columns = [c.strip().replace("\n", "") for c in df.columns]
