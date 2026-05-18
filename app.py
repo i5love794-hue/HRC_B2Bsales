@@ -144,6 +144,7 @@ app = dash.Dash(
     title="현대렌탈케어 법인영업 대시보드",
     suppress_callback_exceptions=True,
 )
+server = app.server  # 배포 환경(gunicorn 등)에서 사용하기 위한 변수
 
 # ── 탭 스타일 ──
 TAB_STYLE = {"backgroundColor": "#f9fafb", "color": TEXT_SECONDARY,
