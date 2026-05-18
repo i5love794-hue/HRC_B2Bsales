@@ -1,0 +1,10 @@
+[project]
+name = "hrc-analyst"
+version = "0.1.0"
+description = "현대렌탈케어 법인영업팀 대시보드"
+requires-python = ">=3.10"
+dependencies = [
+    "dash>=2.14.0",
+    "pandas>=2.0.0",
+    "plotly>=5.18.0",
+]
