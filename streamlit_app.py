@@ -89,12 +89,25 @@ except Exception as e:
     st.stop()
 
 # GeoJSON 로드
-_GEO_PATH = os.path.join(os.path.dirname(__file__), "data", "korea_provinces.json")
-try:
-    with open(_GEO_PATH, encoding="utf-8") as f:
-        KOREA_GEO = json.load(f)
-except Exception:
-    KOREA_GEO = None
+KOREA_GEO = None
+geo_error_msg = ""
+possible_paths = [
+    os.path.join(os.path.dirname(__file__), "data", "korea_provinces.json"),
+    "data/korea_provinces.json",
+    "korea_provinces.json"
+]
+
+for path in possible_paths:
+    try:
+        with open(path, encoding="utf-8") as f:
+            KOREA_GEO = json.load(f)
+            break
+    except Exception as e:
+        geo_error_msg = str(e)
+        continue
+
+if KOREA_GEO is None:
+    st.sidebar.warning(f"지도 데이터를 찾을 수 없습니다: {geo_error_msg}")
 
 # 필터 옵션 추출
 대분류_옵션 = sorted(df["대분류(그룹)"].dropna().unique())
