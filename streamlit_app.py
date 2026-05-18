@@ -202,6 +202,30 @@ with tab1:
     company_df = get_company_summary(filtered_df)
     st.dataframe(company_df, use_container_width=True)
 
+    st.markdown("---")
+    st.subheader("🗺️ 시도별 설치 현황 지도")
+    if KOREA_GEO:
+        region_data = get_region_counts(filtered_df)
+        fig_map = go.Figure(go.Choroplethmapbox(
+            geojson=KOREA_GEO,
+            locations=region_data["시도명"],
+            z=region_data["건수"],
+            featureidkey="properties.name",
+            colorscale=[[0, "#e0f2fe"], [0.3, "#7dd3fc"], [0.6, "#0284c7"], [1, "#0369a1"]],
+            marker=dict(opacity=0.8, line=dict(width=1, color="#ffffff")),
+            hovertemplate="<b>%{location}</b><br>설치 건수: %{z:,}<extra></extra>",
+            colorbar=dict(title=dict(text="건수", font=dict(color=TEXT_SECONDARY)),
+                          tickfont=dict(color=TEXT_SECONDARY), bgcolor="rgba(0,0,0,0)"),
+        ))
+        fig_map.update_layout(
+            mapbox=dict(style="carto-positron", center=dict(lat=36.5, lon=127.5), zoom=5.5),
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(color=TEXT_PRIMARY), margin=dict(l=0, r=0, t=10, b=10), height=550,
+        )
+        st.plotly_chart(fig_map, use_container_width=True)
+    else:
+        st.warning("지도 데이터(korea_provinces.json)를 불러올 수 없어 지도를 표시할 수 없습니다.")
+
 with tab2:
     st.subheader("📈 월별 실적 비교")
     if len(연도_옵션) >= 2:
@@ -222,6 +246,24 @@ with tab2:
 with tab3:
     st.subheader("🔔 약정 만료 알림 (영업지원)")
     if selected_companies:
+        # 영업 알림 텍스트 표시
+        total_count = len(filtered_df)
+        expired_count = len(filtered_df[filtered_df["만료상태"] == "의무약정 만료"])
+        expiring_3m = len(filtered_df[filtered_df["만료상태"] == "3개월 이내 만료 예정"])
+        expiring_6m = len(filtered_df[filtered_df["만료상태"] == "6개월 이내 만료 예정"])
+        target_count = expired_count + expiring_3m + expiring_6m
+        
+        if total_count > 0:
+            alert_text = (f"선택하신 기업은 총 **{total_count:,}**개의 제품을 사용 중이며, "
+                          f"그 중 **{expired_count:,}**개가 의무기간 만료, "
+                          f"**{expiring_3m + expiring_6m:,}**개가 만료 예정입니다. ")
+            if target_count > 0:
+                alert_text += "따라서 재렌탈(또는 신규 교환) 영업이 필요합니다!"
+                st.error(f"🔔 {alert_text}")
+            else:
+                alert_text += "현재 만료 또는 만료 예정인 대상이 없습니다. 지속적인 관리가 필요합니다."
+                st.success(f"🔔 {alert_text}")
+                
         c1, c2 = st.columns([1, 2])
         with c1:
             st.plotly_chart(make_expiration_donut(filtered_df), use_container_width=True)
