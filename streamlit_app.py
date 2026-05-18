@@ -7,8 +7,32 @@ from preprocess import (load_data, get_summary_stats, get_company_summary,
                         get_available_years, get_region_counts)
 from tab2_charts import make_comparison_chart, make_ytd_chart, make_product_stack_chart
 from tab4_expiration import (make_expiration_donut, make_product_status_chart)
-from app import (PLOT_LAYOUT, ACCENT_BLUE, ACCENT_GREEN, ACCENT_ORANGE, ACCENT_RED, 
-                 ACCENT_PURPLE, CHART_COLORS, 제품_순서, 대분류_순서, 교환주기_구간, 렌탈료_구간, TEXT_PRIMARY, TEXT_SECONDARY)
+
+# ── 차트 설정 및 상수 ──
+제품_순서 = ["정수기", "공기청정기", "비데", "커피머신", "제빙기", "기타"]
+대분류_순서 = ["현대백화점그룹", "현대자동차그룹", "HD현대", "일반기업", "관공서 및 정부기관", "교육시설", "비영리법인"]
+교환주기_구간 = ["1개월", "2개월", "3개월", "4개월", "6개월", "12개월", "24개월", "36개월", "없음"]
+렌탈료_구간 = [
+    ("1만원 이하", 0, 10000), ("1만~1.2만", 10000, 12000), ("1.2만~1.5만", 12000, 15000),
+    ("1.5만~2만", 15000, 20000), ("2만~3만", 20000, 30000), ("3만~5만", 30000, 50000),
+    ("5만~10만", 50000, 100000), ("10만원 이상", 100000, float("inf")),
+]
+TEXT_PRIMARY = "#111827"
+TEXT_SECONDARY = "#4b5563"
+ACCENT_BLUE = "#2563eb"
+ACCENT_GREEN = "#10b981"
+ACCENT_ORANGE = "#f59e0b"
+ACCENT_RED = "#ef4444"
+ACCENT_PURPLE = "#8b5cf6"
+CHART_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#ec4899", "#84cc16", "#f97316", "#64748b"]
+
+PLOT_LAYOUT = dict(
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color=TEXT_PRIMARY, family="Pretendard, sans-serif"),
+    margin=dict(l=40, r=20, t=40, b=40),
+    legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=TEXT_SECONDARY)),
+)
 
 st.set_page_config(page_title="현대렌탈케어 대시보드", page_icon="🏢", layout="wide")
 
